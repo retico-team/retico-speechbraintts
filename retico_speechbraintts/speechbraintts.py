@@ -20,17 +20,17 @@ class SpeechBrainTTS:
     ):
         self.tacotron_model = tacotron_model
         self.hifi_model = hifi_model
-        self.tmp_dir = tmp_dir
+        self.tmp_dir = tmp_dir.replace("~", os.path.expanduser("~"))
         self.caching = caching
         self.caching_dir = os.path.join(self.tmp_dir, "sbcache")
         if not os.path.exists(self.caching_dir):
             os.makedirs(self.caching_dir)
 
         self.tacotron2 = Tacotron2.from_hparams(
-            source=tacotron_model, savedir=os.path.join(tmp_dir, "sb_tts")
+            source=tacotron_model, savedir=os.path.join(self.tmp_dir, "sb_tts")
         )
         self.hifi_gan = HIFIGAN.from_hparams(
-            source=hifi_model, savedir=os.path.join(tmp_dir, "sb_vocoder")
+            source=hifi_model, savedir=os.path.join(self.tmp_dir, "sb_vocoder")
         )
 
     def get_cache_path(self, text):
@@ -158,7 +158,6 @@ class SpeechBrainTTSModule(retico_core.AbstractModule):
             len(current_text) - len(self._latest_text) > 15
             and not self.dispatch_on_finish
         ):
-            print(current_text)
             self._latest_text = current_text
             chunk_size = int(self.samplerate * self.frame_duration)
             chunk_size_bytes = chunk_size * self.samplewidth
@@ -184,7 +183,6 @@ class SpeechBrainTTSModule(retico_core.AbstractModule):
                 time.sleep(self.frame_duration)
             else:
                 time.sleep(max((2 * self.frame_duration) - (t1 - t2), 0))
-            # print(self.audio_pointer, len(self.audio_buffer), end="\r")
 
             if self.audio_pointer >= len(self.audio_buffer):
                 raw_audio = (
