@@ -152,8 +152,7 @@ class SpeechBrainTTSModule(retico_core.AbstractModule):
                 self.current_ius.append(iu)
                 self.latest_input_iu = iu
             elif ut == retico_core.UpdateType.REVOKE:
-                if iu in self.current_ius:
-                    self.current_ius.remove(iu)
+                self.revoke(iu)
         current_text = self.current_text()
         if final or (
             len(current_text) - len(self._latest_text) > 15
