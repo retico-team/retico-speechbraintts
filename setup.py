@@ -33,7 +33,12 @@ config = {
     "version": __version__,
     "python_requires": ">=3.6, <4",
     "keywords": "retico, framework, incremental, dialogue, dialog",
-    "install_requires": ["retico_core~=0.2", "speechbrain~=0.5", "numpy~=1.23"],
+    "install_requires": [
+        "retico_core~=0.2",
+        "speechbrain~=0.5",
+        "numpy~=1.23",
+        "torch~=1.12",
+    ],
     "packages": find_packages(),
     "name": "retico-speechbraintts",
     "classifiers": [
