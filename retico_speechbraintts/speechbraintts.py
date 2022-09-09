@@ -136,23 +136,20 @@ class SpeechBrainTTSModule(retico_core.AbstractModule):
         self.clear_after_finish = False
 
     def current_text(self):
-        txt = []
-        for iu in self.current_ius:
-            txt.append(iu.text)
-        return " ".join(txt)
+        return " ".join(iu.text for iu in self.current_input)
 
     def process_update(self, update_message):
         if not update_message:
             return None
         final = False
         for iu, ut in update_message:
-            if iu.committed:
-                final = True
             if ut == retico_core.UpdateType.ADD:
-                self.current_ius.append(iu)
+                self.current_input.append(iu)
                 self.latest_input_iu = iu
             elif ut == retico_core.UpdateType.REVOKE:
                 self.revoke(iu)
+            elif ut == retico_core.UpdateType.COMMIT:
+                final = True
         current_text = self.current_text()
         if final or (
             len(current_text) - len(self._latest_text) > 15
@@ -170,9 +167,13 @@ class SpeechBrainTTSModule(retico_core.AbstractModule):
                     chunk = chunk + b"\x00" * (chunk_size_bytes - len(chunk))
                 new_buffer.append(chunk)
                 i += chunk_size_bytes
-            self.audio_buffer = new_buffer
+            if self.clear_after_finish:
+                self.audio_buffer.extend(new_buffer)
+            else:
+                self.audio_buffer = new_buffer
         if final:
             self.clear_after_finish = True
+            self.current_input = []
 
     def _tts_thread(self):
         t1 = time.time()
@@ -193,7 +194,6 @@ class SpeechBrainTTSModule(retico_core.AbstractModule):
                 if self.clear_after_finish:
                     self.audio_pointer = 0
                     self.audio_buffer = []
-                    self.current_ius = []
                     self.clear_after_finish = False
             else:
                 raw_audio = self.audio_buffer[self.audio_pointer]
