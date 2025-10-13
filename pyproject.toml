@@ -8,7 +8,7 @@ dynamic = ["version"]
 dependencies = [
     "numpy",
     "retico-core>=2.0.0",
-    "speechbrain",
+    "speechbrain<=1.0.3",
     "torch<2.9",
 ]
 authors = [
