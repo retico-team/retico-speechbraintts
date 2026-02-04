@@ -1,12 +1,10 @@
-from email.mime import audio
 import os
 import threading
 import time
 from hashlib import blake2b
-
 import retico_core
-from speechbrain.pretrained import Tacotron2
-from speechbrain.pretrained import HIFIGAN
+from speechbrain.inference import Tacotron2
+from speechbrain.inference import HIFIGAN
 import numpy as np
 
 
