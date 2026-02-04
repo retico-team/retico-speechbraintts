@@ -1,41 +1,42 @@
 # retico-speechbraintts
-
 Local speechbrain speech synthesis for retico.
 
 ## Installation and requirements
-
-You can install the module via pip:
-
+You can install the package with the following command:
 ```bash
-$ pip install retico-speechbraintts
-```
-
-For this, PyTorch has to be installed:
-
-```bash
-$ pip install torch
+pip install git+https://github.com/retico-team/retico-speechbraintts
 ```
 
 ## Example
-
 ```python
-from retico_core import *
-import retico_wav2vecasr
-import retico_speechbraintts
+from retico_core.debug import DebugModule
+from retico_core.audio import MicrophoneModule, SpeakerModule
+from retico_googleasr import GoogleASRModule
+from retico_speechbraintts import SpeechBrainTTSModule
 
-microphone = audio.MicrophoneModule()
-asr = retico_wav2vecasr.Wav2VecASRModule("en")
-tts = retico_speechbraintts.SpeechBrainTTSModule("en")
-speaker = audio.SpeakerModule(rate=22050)
 
-microphone.subscribe(asr)
+debug = DebugModule(print_payload_only=True)
+mic = MicrophoneModule()
+asr = GoogleASRModule(rate=16_000)
+tts = SpeechBrainTTSModule("en")
+speaker = SpeakerModule(rate=22050)
+
+mic.subscribe(asr)
 asr.subscribe(tts)
+asr.subscribe(debug)
 tts.subscribe(speaker)
 
-network.run(asr)
+mic.run()
+asr.run()
+tts.run()
+speaker.run()
+debug.run()
 
-print("Running the TTS. Press enter to exit")
 input()
 
-network.stop(asr)
+mic.stop()
+asr.stop()
+tts.stop()
+speaker.stop()
+debug.stop()
 ```
