@@ -72,7 +72,7 @@ class SpeechBrainTTS:
         # Running Vocoder (spectrogram-to-waveform)
         waveforms = self.hifi_gan.decode_batch(mel_output)
 
-        waveform = waveforms.squeeze(1).detach().numpy()[0]
+        waveform = waveforms.squeeze(1).detach().cpu().numpy()[0]
 
         # Convert float32 data [-1,1] to int16 data [-32767,32767]
         waveform = (waveform * 32767).astype(np.int16).tobytes()
