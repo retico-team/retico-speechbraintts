@@ -8,9 +8,7 @@ dynamic = ["version"]
 dependencies = [
     "numpy",
     "retico-core>=2.0.0",
-    # this is a temporary stop-gap until speechbrain releases an updated PyPI package
-    #    "speechbrain",
-    "speechbrain @ git+https://github.com/speechbrain/speechbrain.git",
+    "speechbrain>=1.1.0",
     # speechbrain hasn't yet updated for torch>=2.9
     "torch<2.9",
 ]
@@ -27,3 +25,8 @@ classifiers = [
     "License :: OSI Approved :: Apache Software License",
 ]
 
+[project.urls]
+Repository = "https://github.com/retico-team/retico-speechbraintts"
+
+[tool.setuptools_scm]
+version_file = "retico_speechbraintts/version.py"
